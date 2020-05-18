@@ -11,3 +11,5 @@ Python (>=3.7.7)
 RDKit (>=2020.3)
 
 Pytest (>=5.4.2)
+
+networkx (>=2.4)
