@@ -1,2 +1,2 @@
+from setuptools import setup, find_packages
 import rdkit
-import rdmapper

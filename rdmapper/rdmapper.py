@@ -48,27 +48,20 @@ def initialize_smarts(smarts: str) -> str:
             idx += 1
     return initialized_smarts
 
-def mapped_smarts(smarts: str, idx_map: Dict[int, int]) -> str:
+def mapped_smarts_by_imap(smarts: str, idx_map: Dict[int, int]) -> str:
     smarts_list:List[str] = smarts.split('>>')
     result_smarts:str =  smarts_list[0] + '>>'
     product_smarts:str = smarts_list[1]
     idx:int = 0
-    print(product_smarts)
     while idx < len(product_smarts):
         if product_smarts[idx] == ':':
-            print('nyaaaaa')
             idx += 1
             from_idx = idx
             while not product_smarts[idx] == ']':
                 idx += 1
             to_idx = idx
-            print('to_idx:',idx)
-            print('from_idx:',from_idx)
             digit = product_smarts[from_idx:to_idx]
-            print(digit, list(idx_map.keys()))
-            print(type(digit))
             if int(digit) in list(idx_map.keys()):
-                print('hoge')
                 result_smarts += ":{}".format(str(idx_map[int(digit)]))
             result_smarts += ']'
             from_idx:int  = -1
@@ -77,8 +70,10 @@ def mapped_smarts(smarts: str, idx_map: Dict[int, int]) -> str:
         else:
             result_smarts += product_smarts[idx]
             idx += 1
-            print(result_smarts)
     return result_smarts
+
+def add(x, y):
+    return x + y + 2
 
 def smiles_to_smarts(smiles):
     return Chem.MolToSmarts(Chem.MolFromSmiles(smiles))
