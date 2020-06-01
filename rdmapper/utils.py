@@ -54,10 +54,16 @@ def mapped_smarts_by_imap(smarts: str, idx_map: Dict[int, int]) -> str:
     product_smarts:str = smarts_list[1]
     idx:int = 0
     while idx < len(product_smarts):
-        if product_smarts[idx] == ':':
+        if product_smarts[idx] == '[':
+            result_smarts += product_smarts[idx]
             idx += 1
-            from_idx = idx
+            extend:bool = True
             while not product_smarts[idx] == ']':
+                if product_smarts[idx] == ':':
+                    from_idx = idx + 1
+                    extend = False
+                if extend:
+                    result_smarts += product_smarts[idx]
                 idx += 1
             to_idx = idx
             digit = product_smarts[from_idx:to_idx]
@@ -72,8 +78,31 @@ def mapped_smarts_by_imap(smarts: str, idx_map: Dict[int, int]) -> str:
             idx += 1
     return result_smarts
 
-def add(x, y):
-    return x + y + 2
+def bondtype2int(bond_type):
+    if bond_type == 'SINGLE':
+        return 1
+    elif bond_type == 'DOUBLE':
+        return 2
+    elif bond_type == 'TRIPLE':
+        return 3
+    elif bond_type == 'AROMATIC':
+        return 4
+    elif bond_type == 'UNSPECIFIED':
+        return 5
+
+def mol2nxgraph(mol):
+    g = nx.Graph()
+    for atom in mol.GetAtoms():
+        g.add_node(atom.GetIdx(), atomicNum=atom.GetAtomicNum())
+    for bond in mol.GetBonds():
+        begin = bond.GetBeginAtomIdx()
+        end = bond.GetEndAtomIdx()
+        bond_type = mol.GetBondBetweenAtoms(begin,end).GetBondType()
+        g.add_edge(begin,
+                   end,
+                   weight=bondtype2int(str(bond_type)),
+                   bondType=str(bond_type))
+    return g
 
 def smiles_to_smarts(smiles):
     return Chem.MolToSmarts(Chem.MolFromSmiles(smiles))
